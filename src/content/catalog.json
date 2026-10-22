@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "sample-2026-10-22-001",
+  "subjects": [
+    {
+      "id": "kor",
+      "name": "국어",
+      "order": 1
+    },
+    {
+      "id": "math",
+      "name": "수학",
+      "order": 2
+    }
+  ],
+  "decks": [
+    {
+      "id": "kor-literature",
+      "subjectId": "kor",
+      "title": "말에 색을 입히는 표현법",
+      "description": "직유부터 반어까지, 익숙한 문장 속에 숨어 있는 표현의 비밀.",
+      "published": true,
+      "cardIds": [
+        "kor-lit-01",
+        "kor-lit-02",
+        "kor-lit-03",
+        "kor-lit-04",
+        "kor-lit-05",
+        "kor-lit-06",
+        "kor-lit-07",
+        "kor-lit-08"
+      ],
+      "level": "중등 · 문학"
+    },
+    {
+      "id": "kor-parts",
+      "subjectId": "kor",
+      "title": "문장을 이루는 작은 조각",
+      "description": "명사, 동사, 형용사. 낱말마다 맡은 역할을 찾아봐요.",
+      "published": true,
+      "cardIds": [
+        "kor-pos-01",
+        "kor-pos-02",
+        "kor-pos-03",
+        "kor-pos-04",
+        "kor-pos-05",
+        "kor-pos-06"
+      ],
+      "level": "중등 · 문법"
+    },
+    {
+      "id": "math-geometry",
+      "subjectId": "math",
+      "title": "눈으로 익히는 도형",
+      "description": "각과 선, 그리고 도형. 그림으로 보면 조금 더 쉬워져요.",
+      "published": true,
+      "cardIds": [
+        "math-geo-01",
+        "math-geo-02",
+        "math-geo-03",
+        "math-geo-04",
+        "math-geo-05",
+        "math-geo-06"
+      ],
+      "level": "초등 · 기하"
+    }
+  ],
+  "cards": [
+    {
+      "id": "kor-lit-01",
+      "revision": 1,
+      "term": "직유법",
+      "definition": "비슷한 성질을 가진 두 대상을 “같이”, “처럼”, “듯이” 등의 말로 직접 비교하는 표현 방법.",
+      "units": ["비유"],
+      "example": "구름이 솜사탕처럼 하늘에 떠 있다.",
+      "visual": {
+        "src": "/visuals/simile.svg",
+        "alt": "구름과 솜사탕을 “처럼”이라는 말로 이어 비교한 도식",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "kor-lit-02",
+      "revision": 1,
+      "term": "은유법",
+      "definition": "한 대상을 다른 대상이라고 표현하여 두 대상의 공통된 성질을 드러내는 표현 방법.",
+      "units": ["비유"],
+      "example": "내 마음은 호수요.",
+      "visual": {
+        "src": "/visuals/metaphor.svg",
+        "alt": "마음과 잔잔한 호수를 등호로 연결한 도식",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "kor-lit-03",
+      "revision": 1,
+      "term": "의인법",
+      "definition": "사람이 아닌 대상을 사람처럼 행동하거나 느끼는 것으로 표현하는 방법.",
+      "units": ["비유"],
+      "example": "봄바람이 내게 다정하게 속삭였다.",
+      "visual": {
+        "src": "/visuals/personification.svg",
+        "alt": "바람에 말풍선을 붙여 “안녕” 하고 인사하는 것처럼 표현한 그림",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "kor-lit-04",
+      "revision": 1,
+      "term": "과장법",
+      "definition": "대상의 크기나 상태를 실제보다 크게 또는 작게 표현하여 느낌을 강조하는 방법.",
+      "units": ["강조"],
+      "example": "기다리다 목이 빠지겠다."
+    },
+    {
+      "id": "kor-lit-05",
+      "revision": 1,
+      "term": "반복법",
+      "definition": "같거나 비슷한 말, 구절을 되풀이하여 뜻을 강조하거나 운율을 만드는 방법.",
+      "units": ["강조"],
+      "example": "산에는 꽃 피네 / 꽃이 피네",
+      "visual": {
+        "src": "/visuals/repetition.svg",
+        "alt": "동일한 꽃 모양을 세 번 반복한 도식",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "kor-lit-06",
+      "revision": 1,
+      "term": "대조법",
+      "definition": "서로 반대되거나 다른 내용을 나란히 놓아 그 차이를 뚜렷하게 드러내는 방법.",
+      "units": ["강조"],
+      "example": "밖은 차가웠지만 방 안은 따뜻했다.",
+      "visual": {
+        "src": "/visuals/contrast.svg",
+        "alt": "차가운 파란색 눈송이와 따뜻한 주황색 해를 나란히 놓은 그림",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "kor-lit-07",
+      "revision": 1,
+      "term": "반어법",
+      "definition": "실제로 말하려는 뜻과 반대로 표현하여 의미를 강조하는 방법.",
+      "units": ["변화"],
+      "example": "약속에 늦은 친구에게 “참 일찍도 왔구나!”라고 말했다."
+    },
+    {
+      "id": "kor-lit-08",
+      "revision": 1,
+      "term": "설의법",
+      "definition": "쉽게 짐작할 수 있는 답을 질문의 형식으로 표현하여 뜻을 강조하는 방법.",
+      "units": ["변화"],
+      "example": "누가 고향을 그리워하지 않겠는가?"
+    },
+    {
+      "id": "kor-pos-01",
+      "revision": 1,
+      "term": "명사",
+      "definition": "사람, 사물, 장소, 개념 등의 이름을 나타내는 말.",
+      "units": ["체언"],
+      "example": "학생, 나무, 학교, 사랑"
+    },
+    {
+      "id": "kor-pos-02",
+      "revision": 1,
+      "term": "대명사",
+      "definition": "사람이나 사물, 장소 등의 이름을 대신하여 가리키는 말.",
+      "units": ["체언"],
+      "example": "나, 너, 이것, 거기"
+    },
+    {
+      "id": "kor-pos-03",
+      "revision": 1,
+      "term": "수사",
+      "definition": "사물의 수량이나 순서를 나타내는 말.",
+      "units": ["체언"],
+      "example": "하나, 둘, 첫째, 둘째"
+    },
+    {
+      "id": "kor-pos-04",
+      "revision": 1,
+      "term": "동사",
+      "definition": "사람이나 사물의 움직임 또는 작용을 나타내는 말.",
+      "units": ["용언"],
+      "example": "달리다, 읽다, 흐르다"
+    },
+    {
+      "id": "kor-pos-05",
+      "revision": 1,
+      "term": "형용사",
+      "definition": "사람이나 사물의 성질 또는 상태를 나타내는 말.",
+      "units": ["용언"],
+      "example": "아름답다, 높다, 조용하다"
+    },
+    {
+      "id": "kor-pos-06",
+      "revision": 1,
+      "term": "부사",
+      "definition": "주로 용언 앞에서 그 뜻을 자세하게 꾸며 주는 말.",
+      "units": ["수식언"],
+      "example": "매우 빠르다, 아주 조용하다"
+    },
+    {
+      "id": "math-geo-01",
+      "revision": 1,
+      "term": "예각",
+      "definition": "크기가 0°보다 크고 90°보다 작은 각.",
+      "units": ["각"],
+      "visual": {
+        "src": "/visuals/acute.svg",
+        "alt": "한 꼭짓점에서 수평인 반직선과 오른쪽 위로 향하는 반직선이 이루는 45도 각",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "math-geo-02",
+      "revision": 1,
+      "term": "직각",
+      "definition": "크기가 90°인 각. 두 선이 수직으로 만날 때 생기는 각이다.",
+      "units": ["각"],
+      "visual": {
+        "src": "/visuals/right.svg",
+        "alt": "수평선과 수직선이 만나고 모서리에 작은 네모가 표시된 90도 각",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "math-geo-03",
+      "revision": 1,
+      "term": "둔각",
+      "definition": "크기가 90°보다 크고 180°보다 작은 각.",
+      "units": ["각"],
+      "visual": {
+        "src": "/visuals/obtuse.svg",
+        "alt": "오른쪽 수평 반직선과 왼쪽 위 반직선 사이에 표시된 120도 각",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "math-geo-04",
+      "revision": 1,
+      "term": "정삼각형",
+      "definition": "세 변의 길이가 모두 같은 삼각형. 세 각의 크기도 각각 60°로 같다.",
+      "units": ["다각형"],
+      "visual": {
+        "src": "/visuals/triangle.svg",
+        "alt": "세 변에 같은 길이 표시가 있는 정삼각형",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "math-geo-05",
+      "revision": 1,
+      "term": "정사각형",
+      "definition": "네 변의 길이가 모두 같고 네 각이 모두 직각인 사각형.",
+      "units": ["다각형"],
+      "visual": {
+        "src": "/visuals/square.svg",
+        "alt": "같은 길이의 네 변과 네 모서리의 직각 표시가 있는 정사각형",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    },
+    {
+      "id": "math-geo-06",
+      "revision": 1,
+      "term": "평행선",
+      "definition": "한 평면 위에서 아무리 늘여도 서로 만나지 않는 두 직선.",
+      "units": ["선"],
+      "visual": {
+        "src": "/visuals/parallel.svg",
+        "alt": "일정한 간격을 유지하며 같은 방향으로 나란히 뻗은 두 직선",
+        "attribution": "Know or Nope 자체 제작 학습 도식"
+      }
+    }
+  ]
+}

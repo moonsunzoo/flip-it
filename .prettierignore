@@ -1,0 +1,7 @@
+docs/prd/know-or-nope-prd-*.md
+package-lock.json
+node_modules
+dist
+test-results
+playwright-report
+coverage
