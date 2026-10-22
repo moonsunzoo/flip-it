@@ -2,6 +2,8 @@
 
 현재는 **학생 학습 흐름의 첫 개발 버전**이다. PRD Phase A 전체와 수업 투입 조건은 아직 충족하지 않는다.
 
+학생 앱은 **[GitHub Pages](https://moonsunzoo.github.io/flip-it/)에 배포 완료**했다. 2026-10-22 21:06 (한국 시간), 공개 사이트의 데스크톱·모바일 E2E 20개가 모두 통과했다.
+
 ## 구현 범위
 
 | PRD              | 상태      | 현재 동작                                                              |
@@ -50,10 +52,12 @@
 - `gh api user`와 저장소 권한 API 조회는 현재 실행 환경에서 `Forbidden`으로 차단된다. 로컬 네트워크 정책에는 `api.github.com`과 `moonsunzoo.github.io`가 없다. API 실패만으로 CLI 계정을 판정하지 않았으며, 계정 불일치의 근거는 Git 서버의 dry-run 응답이다.
 - Git CLI 인증을 변경하는 대신, `moonsunzoo` 연결 도구의 Git 데이터 API로 원격 게시를 완료했다. 최초 소스 게시 커밋은 `ea47a48836924826f9961c37a27c45b2bf17c3d0`이며, 파일 트리 `07f43a3a5cdb30cc06467957b4a16eb9b8596736`는 로컬 복원 검증 커밋 `c738624`와 일치한다. 원본 Git 기록은 첨부 번들과 로컬 `handoff/recovered-main` 브랜치에 보존한다. 원격 게시 과정에서 새 커밋 ID가 생긴 사실을 원본 기록 복원과 구분한다.
 - 원격 CI [39774358185](https://github.com/moonsunzoo/flip-it/actions/runs/39774358185)는 성공했다. 두 base 경로에서 각각 포맷·타입·단위 테스트·빌드·브라우저 E2E를 실행했다.
-- 최초 배포 실행 [39774358171](https://github.com/moonsunzoo/flip-it/actions/runs/39774358171)은 Pages 설정 조회에서 `Not Found`로 실패했다. 이후 사용자가 저장소 Pages Source를 GitHub Actions로 설정 완료했다고 확인했다. 새 배포 실행과 공개 주소 검증을 이어간다.
+- 최초 배포 실행 [39774358171](https://github.com/moonsunzoo/flip-it/actions/runs/39774358171)은 Pages 설정 조회에서 `Not Found`로 실패했다. 이후 사용자가 저장소 Pages Source를 GitHub Actions로 설정 완료했고, 아래 재배포가 성공했다.
+- 배포 커밋 `35647724d3013382117e7282833b30cc0712e473`의 [배포 실행 39775192918](https://github.com/moonsunzoo/flip-it/actions/runs/39775192918)은 build·deploy·verify 모두 성공했다. 21:06 (한국 시간)에 Pages 게시가 완료됐으며, 공개 URL의 HTTP 검사와 실제 데스크톱·모바일 브라우저 테스트 20개가 통과했다.
+- 공개 주소는 `https://moonsunzoo.github.io/flip-it/`이다. `/flip-it/` 자산 경로, 해시 화면 이동, 직접 진입·새로고침, SVG 이미지 로딩, 로컬 학습 복원을 공개 사이트에서 검증했다. 클라우드 실행 환경의 외부 접속 제한과 별개로, 이 검사는 GitHub 호스팅 러너에서 공개 주소를 직접 대상으로 실행했다.
 - PAT 추가, 기존 계정 삭제, 다른 계정의 collaborator 추가, 프록시 우회나 전역 인증 변경은 하지 않았다. 현재 제공된 환경 도구는 상태 조회만 지원하며, 실행 환경의 Git 계정 선택 원인은 아직 확인되지 않았다.
 
-후속 원격 변경도 올바른 계정의 연결 도구로 부모 커밋을 확인하고 fast-forward로 게시한다. 배포 워크플로에는 게시 URL을 직접 검사하는 E2E 단계를 추가했다. 공개 URL과 실제 브라우저 동작 검증까지 성공해야 배포 완료로 기록한다.
+후속 원격 변경도 올바른 계정의 연결 도구로 부모 커밋을 확인하고 fast-forward로 게시한다. 배포 워크플로에는 게시 URL을 직접 검사하는 E2E 단계를 추가했다. 이번 완료 기록과 README 링크만 갱신하는 문서 커밋은 `[skip ci]`로 중복 배포를 생략하며, 실제 게시 버전은 위의 `3564772`이다.
 
 ## 다음 구현 순서
 
