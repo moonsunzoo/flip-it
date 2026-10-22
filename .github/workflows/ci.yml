@@ -6,7 +6,7 @@ permissions:
   contents: read
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     strategy:
       matrix:
@@ -22,5 +22,5 @@ jobs:
       - run: npm ci
       - run: npm run format:check
       - run: npm run check
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install chromium
       - run: npm run test:e2e

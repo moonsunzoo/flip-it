@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: read
@@ -34,7 +34,7 @@ jobs:
         run: npm run check
         env:
           VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}/
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install chromium
       - name: Verify production artifact
         run: npm run test:e2e
         env:
@@ -44,7 +44,7 @@ jobs:
           path: dist
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       page_url: ${{ steps.deployment.outputs.page_url }}
     permissions:
@@ -59,7 +59,7 @@ jobs:
         uses: actions/deploy-pages@v4
   verify:
     needs: deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
       PLAYWRIGHT_BASE_URL: ${{ needs.deploy.outputs.page_url }}
@@ -70,7 +70,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install chromium
       - name: Check published URL
         run: curl --fail --silent --show-error --retry 10 --retry-all-errors --retry-delay 6 --output /dev/null "$PLAYWRIGHT_BASE_URL"
       - name: Verify published routing and study flows
