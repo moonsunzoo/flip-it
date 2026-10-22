@@ -32,7 +32,7 @@
 | PRD 원본 비교              | 38,802바이트 완전 일치                                          |
 | 번들·소스 복원             | manifest 53개 파일 검증, 추적 파일 49개가 첨부 소스와 완전 일치 |
 
-새 환경은 Node.js 24.19.0, npm 11.9.0, Chromium 154.0.8037.57을 사용한다. 실행한 테스트는 건너뛴 항목 없이 모두 통과했다. 루트 경로의 프로덕션 빌드와 E2E 20개 통과, 데스크톱·모바일 스크린샷 확인은 이전 환경의 기록이며 이번에는 반복하지 않았다. GitHub Actions 원격 실행과 실제 Pages 게시·사이트 확인은 아직 완료하지 않았다.
+새 환경은 Node.js 24.19.0, npm 11.9.0, Chromium 154.0.8037.57을 사용한다. 위 검증은 건너뛴 항목 없이 모두 통과했다. 이후 원격 소스를 게시하고 GitHub Actions의 `/`와 `/flip-it/` CI도 모두 통과했다. 데스크톱·모바일 스크린샷 확인은 이전 환경의 기록이며 이번에는 반복하지 않았다. 실제 Pages 게시·사이트 확인은 아래 배포 상태와 구분한다.
 
 - `npm run check`: TypeScript, Vitest 도메인 테스트, Vite 프로덕션 빌드.
 - `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e`: 실제 Chromium의 데스크톱 및 360px 모바일 설정.
@@ -48,10 +48,12 @@
 - GitHub 연결 도구에서 명시적으로 선택한 `moonsunzoo` 계정은 인증에 성공했고, `moonsunzoo/flip-it`의 `permissions.push: true`, 관리자 권한을 확인했다.
 - 실행 환경의 HTTPS Git 인증은 별개다. 쓰기 없는 `git push --dry-run origin main`에서 `Permission to moonsunzoo/flip-it.git denied to mun-seonju`와 HTTP 403이 반환됐다. 원격 ref는 비어 있었으며 실제 push는 수행하지 않았다.
 - `gh api user`와 저장소 권한 API 조회는 현재 실행 환경에서 `Forbidden`으로 차단된다. 로컬 네트워크 정책에는 `api.github.com`과 `moonsunzoo.github.io`가 없다. API 실패만으로 CLI 계정을 판정하지 않았으며, 계정 불일치의 근거는 Git 서버의 dry-run 응답이다.
-- 연결 도구에는 Pages 설정을 활성화하는 기능이 없고, 현재 제공된 환경 도구는 상태 조회만 지원한다. 플랫폼의 Git 인증 연결을 `moonsunzoo`로 적용하고 두 도메인을 허용한 뒤 실제 환경에서 다시 확인해야 한다. 플랫폼 내부의 계정 선택 원인은 아직 확인되지 않았다.
-- PAT 추가, 기존 계정 삭제, 다른 계정의 collaborator 추가, 프록시 우회나 전역 인증 변경은 하지 않았다. 인증 조건이 충족되기 전까지 원격 업로드와 Pages 설정 변경을 보류한다.
+- Git CLI 인증을 변경하는 대신, `moonsunzoo` 연결 도구의 Git 데이터 API로 원격 게시를 완료했다. 최초 소스 게시 커밋은 `ea47a48836924826f9961c37a27c45b2bf17c3d0`이며, 파일 트리 `07f43a3a5cdb30cc06467957b4a16eb9b8596736`는 로컬 복원 검증 커밋 `c738624`와 일치한다. 원본 Git 기록은 첨부 번들과 로컬 `handoff/recovered-main` 브랜치에 보존한다. 원격 게시 과정에서 새 커밋 ID가 생긴 사실을 원본 기록 복원과 구분한다.
+- 원격 CI [39774358185](https://github.com/moonsunzoo/flip-it/actions/runs/39774358185)는 성공했다. 두 base 경로에서 각각 포맷·타입·단위 테스트·빌드·브라우저 E2E를 실행했다.
+- 최초 배포 실행 [39774358171](https://github.com/moonsunzoo/flip-it/actions/runs/39774358171)은 Pages 설정 조회에서 `Not Found`로 실패했다. 이후 사용자가 저장소 Pages Source를 GitHub Actions로 설정 완료했다고 확인했다. 새 배포 실행과 공개 주소 검증을 이어간다.
+- PAT 추가, 기존 계정 삭제, 다른 계정의 collaborator 추가, 프록시 우회나 전역 인증 변경은 하지 않았다. 현재 제공된 환경 도구는 상태 조회만 지원하며, 실행 환경의 Git 계정 선택 원인은 아직 확인되지 않았다.
 
-인증 수정 후에는 원격 변경 여부를 확인하고 일반 push를 사용한다. Pages Source를 GitHub Actions로 설정한 뒤 해당 커밋의 배포 워크플로 성공과 공개 URL·JS/CSS·이미지·실제 브라우저 동작을 확인해야 배포 완료로 기록한다.
+후속 원격 변경도 올바른 계정의 연결 도구로 부모 커밋을 확인하고 fast-forward로 게시한다. 배포 워크플로에는 게시 URL을 직접 검사하는 E2E 단계를 추가했다. 공개 URL과 실제 브라우저 동작 검증까지 성공해야 배포 완료로 기록한다.
 
 ## 다음 구현 순서
 
@@ -70,4 +72,4 @@
 - 이력은 단어장당 20회까지 유지한다. 삭제·시크릿 모드 종료·기기 변경 시 복원이 보장되지 않는다.
 - 여러 탭에서 동시에 학습하면 마지막 저장이 우선한다.
 - 접근성은 기본 키보드 조작·상태 텍스트·대체 텍스트·축소 모션 대응까지 포함한다. 별도 보조 기술 감사, Safari/Firefox 검증은 아직 수행하지 않았다.
-- 초기 코드와 이번 복원 검증 기록은 로컬에 보존되어 있다. 실행 환경의 Git 인증 불일치로 원격 반영과 Pages 배포는 완료되지 않았다. 위의 연결 도구 인증과 실행 환경 인증을 구분해야 한다.
+- 원격 소스 게시는 `moonsunzoo` 연결 도구를 사용한다. 실행 환경 Git CLI의 계정 불일치는 해결되지 않았으므로 일반 `git push`가 동작한다고 가정하지 않는다.

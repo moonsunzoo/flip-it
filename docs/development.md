@@ -56,4 +56,6 @@ VITE_BASE_PATH=/flip-it/ npm run check
 CI=true VITE_BASE_PATH=/flip-it/ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
 ```
 
-GitHub 연결 도구에서 `moonsunzoo`를 선택할 수 있다는 사실이 실행 환경의 Git 인증도 같은 계정임을 보장하지 않는다. 원격 쓰기 전에 실제 Git/CLI 인증과 저장소 push 권한을 확인한다. 현재 확인된 불일치와 후속 배포 조건은 [구현 현황](implementation-status.md#복원-및-배포-상태)에 기록한다. 기존 두 계정을 유지하고 별도 PAT를 등록하지 않는다. API 조회·Pages 설정에는 `api.github.com`, 게시 사이트 확인에는 `moonsunzoo.github.io`의 환경 네트워크 허용이 필요하다.
+GitHub 연결 도구에서 `moonsunzoo`를 선택할 수 있다는 사실이 실행 환경의 Git 인증도 같은 계정임을 보장하지 않는다. 원격 쓰기 전에 사용할 경로의 인증과 저장소 push 권한을 확인한다. 현재 Git CLI의 계정 불일치는 그대로지만, `moonsunzoo` 연결 도구의 Git 데이터 API로 검증된 소스를 원격 `main`에 게시했다. 원본 커밋은 `handoff/recovered-main` 로컬 브랜치와 첨부 번들에 보존한다. 원격 초기 커밋 SHA는 달라졌지만 게시한 파일 트리는 복원본과 일치한다.
+
+기존 두 계정을 유지하고 별도 PAT를 등록하지 않는다. 현재 상태는 [구현 현황](implementation-status.md#복원-및-배포-상태)에 기록한다. 실행 환경에서 직접 API를 호출하려면 `api.github.com`, 게시 사이트를 검사하려면 `moonsunzoo.github.io`의 환경 네트워크 허용이 필요하다. Pages 배포 워크플로는 GitHub 호스팅 러너에서 공개 URL을 직접 검증한다.

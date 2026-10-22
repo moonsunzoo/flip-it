@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const baseURL = `http://127.0.0.1:4173${process.env.VITE_BASE_PATH || '/'}`;
+const deployedURL = process.env.PLAYWRIGHT_BASE_URL;
+const baseURL = deployedURL || `http://127.0.0.1:4173${process.env.VITE_BASE_PATH || '/'}`;
 
 export default defineConfig({
   testDir: './tests/e2e',
@@ -28,9 +29,11 @@ export default defineConfig({
       },
     },
   ],
-  webServer: {
-    command: 'npm run preview -- --host 127.0.0.1',
-    url: baseURL,
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: deployedURL
+    ? undefined
+    : {
+        command: 'npm run preview -- --host 127.0.0.1',
+        url: baseURL,
+        reuseExistingServer: !process.env.CI,
+      },
 });

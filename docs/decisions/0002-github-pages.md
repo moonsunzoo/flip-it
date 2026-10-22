@@ -7,6 +7,8 @@
 
 Vite가 만든 `dist/`를 공식 Pages Actions로 게시한다. `main` 푸시 또는 수동 실행 시 검증·빌드·브라우저 테스트가 성공한 산출물만 업로드하고 배포한다.
 
+게시 후에는 배포 액션이 반환한 공개 URL을 대상으로 같은 데스크톱·모바일 E2E 20개를 실행한다. 이 검사는 별도 로컬 서버를 띄우지 않으며, 실제 사이트의 직접 진입·새로고침·이미지 경로·학습 복원을 확인한다. 게시가 성공해도 이 검사가 실패하면 전체 워크플로는 실패로 표시된다.
+
 `actions/configure-pages`의 `base_path`로 `VITE_BASE_PATH`를 설정하므로 프로젝트 사이트의 `/flip-it/` 하위 경로와 사용자 지정 도메인의 루트 경로를 처리한다. UI 라우팅은 해시를 사용하여 직접 진입·새로고침 시 정적 서버의 404 라우팅 문제를 피한다. 로컬 SVG도 Vite base 경로를 따른다.
 
 ## 저장소에서 필요한 설정
@@ -29,3 +31,9 @@ VITE_BASE_PATH=/flip-it/ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium n
 ```
 
 일반 개발은 기본 경로 `/`를 사용한다. CI는 `/`와 `/flip-it/` 두 경로에서 동일한 수용 테스트를 실행한다.
+
+이미 게시된 사이트는 다음과 같이 검사한다. 해당 주소에 네트워크 접근이 가능한 환경에서 실행해야 한다.
+
+```sh
+PLAYWRIGHT_BASE_URL=https://moonsunzoo.github.io/flip-it/ npm run test:e2e
+```
