@@ -1,5 +1,12 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { BookOpen, History as HistoryIcon, AlertCircle, Sprout, ArrowUpRight } from 'lucide-react';
+import {
+  BookOpen,
+  History as HistoryIcon,
+  AlertCircle,
+  Sprout,
+  ArrowUpRight,
+  Layers2,
+} from 'lucide-react';
 import { cardsForDeck, type Catalog } from './lib/content';
 import { useProgress } from './lib/useProgress';
 import { createSession } from './lib/study';
@@ -119,13 +126,11 @@ export default function App({ catalog }: { catalog: Catalog }) {
         본문으로 건너뛰기
       </a>
       <header className="site-header">
-        <a className="brand" href="#/" aria-label="Know or Nope 홈">
-          <span className="brand-mark">
-            k<span>n</span>
+        <a className="brand" href="#/" aria-label="flip-it 홈">
+          <span className="brand-mark" aria-hidden="true">
+            <Layers2 size={22} />
           </span>
-          <span>
-            know or nope<span className="brand-dot">.</span>
-          </span>
+          <span>flip-it</span>
         </a>
         <nav aria-label="주 메뉴">
           <a

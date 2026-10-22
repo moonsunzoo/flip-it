@@ -7,7 +7,7 @@ export const visibilitySchema = z.object({
   definition: z.boolean(),
 });
 export type Visibility = z.infer<typeof visibilitySchema>;
-export const DEFAULT_VISIBILITY: Visibility = { term: false, visual: true, definition: true };
+export const DEFAULT_VISIBILITY: Visibility = { term: true, visual: false, definition: false };
 export const ratingSchema = z.enum(['known', 'unknown']);
 export type Rating = z.infer<typeof ratingSchema>;
 export type Order = 'random' | 'alphabetical';

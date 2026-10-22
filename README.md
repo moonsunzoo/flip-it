@@ -1,6 +1,6 @@
-# Know or Nope
+# flip-it
 
-교사가 만든 개념 카드를 학생이 단어·그림·설명으로 학습하고, 이해도를 스스로 확인하는 웹서비스입니다. 저장소 이름은 `flip-it`, 서비스 이름은 **Know or Nope**입니다.
+개념 카드를 단어·그림·설명으로 학습하고, 이해도를 스스로 확인하는 웹서비스 **flip-it**입니다.
 
 **웹앱:** [moonsunzoo.github.io/flip-it](https://moonsunzoo.github.io/flip-it/)
 
@@ -9,6 +9,7 @@
 ## 문서
 
 - [PRD v0.2 원본](docs/prd/know-or-nope-prd-v0.2.md)
+- [현재 PRD v0.3 변경 사항](docs/prd/flip-it-prd-v0.3.md)
 - [PRD 관리 규칙](docs/prd/README.md)
 - [구현 현황과 다음 작업](docs/implementation-status.md)
 - [초기 기술 결정](docs/decisions/0001-initial-architecture.md)
@@ -43,7 +44,7 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
 
 - 과목·단어장 선택, 전체·주제·개별 카드 범위 선택
 - 회차당 한 번 무작위 배치 또는 가나다순 정렬
-- 단어·그림·설명의 초기 공개 설정과 학습 중 독립 토글
+- 단어 ON·그림 OFF·설명 OFF로 시작하는 초기 표시 설정과 학습 중 독립 토글
 - 알고 있음 / 모름 / 미판정, 판정 변경·취소
 - 새로고침 후 순서·위치·평가 복원, 단어장별 이어하기
 - 명시적 완료, 결과 집계, 단어장별 최근 20회 이력
@@ -51,7 +52,9 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
 
 학습 기록은 브라우저 LocalStorage에만 저장됩니다. 같은 기기에서도 브라우저가 다르거나 사이트 주소가 바뀌면 공유되지 않습니다. 여러 탭에서 동시에 변경하면 마지막으로 저장한 기록이 남습니다.
 
-`src/content/catalog.json`은 국어 14장·수학 6장의 **개발용 샘플**입니다. 도식은 저장소에서 자체 제작했으며, 수업 사용 전 교사의 검수가 필요합니다. 이 파일을 직접 편집하는 방식은 교사용 운영 도구를 대체하지 않습니다.
+`src/content/catalog.json`은 문학 50장·문법 50장·도형 50장, 총 150장의 **개발용 샘플**입니다. 정의와 예문은 개발 과정에서 작성했으며, 도식은 자체 제작했습니다. 수업 사용 전 교사의 검수가 필요합니다. 이 파일을 직접 편집하는 방식은 교사용 운영 도구를 대체하지 않습니다.
+
+기존 사용자의 진행 중 회차와 완료 이력은 이름 변경 후에도 유지됩니다. 새 기본 표시 설정과 확장된 카드는 새 회차부터 적용됩니다.
 
 ## 구조
 

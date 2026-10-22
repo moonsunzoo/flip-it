@@ -10,16 +10,34 @@ async function start(page: Page) {
 async function readProgress(page: Page) {
   return page.evaluate((key) => JSON.parse(localStorage.getItem(key) ?? '{}'), storageKey);
 }
+async function selectPictureCard(page: Page) {
+  await page.getByRole('button', { name: '직접 선택', exact: true }).click();
+  await page.getByRole('button', { name: '모두 해제' }).click();
+  await page.getByLabel('정삼각형').check();
+}
 
 test('catalog filters by subject and opens settings before studying', async ({ page }) => {
   await page.goto('./');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('한 장씩');
+  await expect(page).toHaveTitle(/^flip-it/);
+  await expect(page.getByRole('link', { name: 'flip-it 홈' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('오늘은 무엇을 알아볼까요?');
+  await expect(page.locator('.hero')).toHaveCount(0);
+  await expect(page.getByText('로그인 없이, 내 속도대로')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: '오늘의 학습 시작' })).toHaveCount(0);
   await expect(page.locator('.deck-card')).toHaveCount(3);
+  await expect(page.getByText('50장의 개념 카드', { exact: true })).toHaveCount(3);
   await page.getByRole('button', { name: '수학' }).click();
   await expect(page.locator('.deck-card')).toHaveCount(1);
   await page.getByRole('link', { name: '학습 설정하기' }).click();
   await expect(page).toHaveURL(/setup$/);
   await expect(page.getByRole('button', { name: '학습 시작하기' })).toBeVisible();
+  await expect(page.getByRole('button', { name: '단어 처음부터 표시' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  for (const name of ['그림 가려두기', '설명 가려두기']) {
+    await expect(page.getByRole('button', { name })).toHaveAttribute('aria-pressed', 'false');
+  }
   await expect(page.getByTestId('study-card')).toHaveCount(0);
 });
 
@@ -31,15 +49,14 @@ test('zero cards and empty initial visibility are blocked; selected topics form 
   await page.getByRole('button', { name: '모두 해제' }).click();
   await expect(page.getByRole('button', { name: '학습 시작하기' })).toBeDisabled();
   await page.getByRole('button', { name: '주제별 선택' }).click();
-  await page.getByLabel('강조').uncheck();
-  await page.getByLabel('변화').uncheck();
-  await page.getByRole('button', { name: '그림 처음부터 표시' }).click();
-  await page.getByRole('button', { name: '설명 처음부터 표시' }).click();
+  for (const checkbox of await page.getByRole('checkbox').all()) await checkbox.uncheck();
+  await page.getByLabel('비유').check();
+  await page.getByRole('button', { name: '단어 처음부터 표시' }).click();
   await expect(page.getByRole('button', { name: '학습 시작하기' })).toBeDisabled();
   await page.getByRole('button', { name: '설명 가려두기' }).click();
   await page.getByRole('button', { name: '학습 시작하기' }).click();
   const progress = await readProgress(page);
-  expect(progress.activeByDeck['kor-literature'].cards).toHaveLength(3);
+  expect(progress.activeByDeck['kor-literature'].cards).toHaveLength(4);
   expect(
     progress.activeByDeck['kor-literature'].cards.every((card: { units: string[] }) =>
       card.units.includes('비유'),
@@ -51,28 +68,32 @@ test('toggles are independent, preset resets on navigation, rating replacement a
   page,
 }) => {
   await start(page);
-  await page.getByRole('button', { name: '단어 보이기', exact: true }).click();
+  await expect(page.getByRole('button', { name: '단어 가리기', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '설명 보이기', exact: true }).click();
+  await expect(page.getByRole('button', { name: '단어 가리기', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '단어 가리기', exact: true }).click();
   await expect(page.getByRole('button', { name: '설명 가리기', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: '모름 Nope, 한 번 더' }).click();
-  await page.getByRole('button', { name: '알고 있음 Know, 알겠어요' }).click();
-  await expect(page.getByRole('button', { name: '알고 있음 Know, 알겠어요' })).toHaveAttribute(
+  await page.getByRole('button', { name: '모름 한 번 더' }).click();
+  await page.getByRole('button', { name: '알고 있음 알겠어요' }).click();
+  await expect(page.getByRole('button', { name: '알고 있음 알겠어요' })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
   await page.getByRole('button', { name: '다음', exact: true }).click();
-  await expect(page.getByRole('button', { name: '단어 보이기', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: '단어 가리기', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: '설명 보이기', exact: true })).toBeVisible();
   const before = await readProgress(page);
   const currentId = await page.getByTestId('study-card').getAttribute('data-card-id');
   await page.reload();
   await expect(page.getByTestId('study-card')).toHaveAttribute('data-card-id', currentId!);
   expect(await readProgress(page)).toEqual(before);
   await page.getByRole('button', { name: '이전', exact: true }).click();
-  await expect(page.getByRole('button', { name: '알고 있음 Know, 알겠어요' })).toHaveAttribute(
+  await expect(page.getByRole('button', { name: '알고 있음 알겠어요' })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
   await page.getByRole('button', { name: '판정 취소', exact: true }).click();
-  await expect(page.getByRole('button', { name: '알고 있음 Know, 알겠어요' })).toHaveAttribute(
+  await expect(page.getByRole('button', { name: '알고 있음 알겠어요' })).toHaveAttribute(
     'aria-pressed',
     'false',
   );
@@ -105,10 +126,10 @@ test('different decks retain their own active sessions and replacing a session r
   page,
 }) => {
   await start(page);
-  await page.getByRole('button', { name: '모름 Nope, 한 번 더' }).click();
+  await page.getByRole('button', { name: '모름 한 번 더' }).click();
   await page.goto('./#/deck/math-geometry/setup');
   await page.getByRole('button', { name: '학습 시작하기' }).click();
-  await page.getByRole('button', { name: '알고 있음 Know, 알겠어요' }).click();
+  await page.getByRole('button', { name: '알고 있음 알겠어요' }).click();
   expect(Object.keys((await readProgress(page)).activeByDeck)).toHaveLength(2);
   await page.goto(literature);
   const original = (await readProgress(page)).activeByDeck['kor-literature'].id;
@@ -117,7 +138,7 @@ test('different decks retain their own active sessions and replacing a session r
   await expect(page).toHaveURL(/setup$/);
   expect((await readProgress(page)).activeByDeck['kor-literature'].id).toBe(original);
   await page.getByRole('button', { name: '이어서 학습', exact: true }).click();
-  await expect(page.getByRole('button', { name: '모름 Nope, 한 번 더' })).toHaveAttribute(
+  await expect(page.getByRole('button', { name: '모름 한 번 더' })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
@@ -142,8 +163,8 @@ test('quota failures warn while the current session remains usable', async ({ pa
   });
   await start(page);
   await expect(page.getByRole('alert')).toContainText('저장하지 못했습니다');
-  await page.getByRole('button', { name: '알고 있음 Know, 알겠어요' }).click();
-  await expect(page.getByRole('button', { name: '알고 있음 Know, 알겠어요' })).toHaveAttribute(
+  await page.getByRole('button', { name: '알고 있음 알겠어요' }).click();
+  await expect(page.getByRole('button', { name: '알고 있음 알겠어요' })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
@@ -157,7 +178,9 @@ test('broken images have a fallback and all primary screens fit the viewport', a
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     ).toBe(true);
   }
+  await selectPictureCard(page);
   await page.getByRole('button', { name: '학습 시작하기' }).click();
+  await page.getByRole('button', { name: '그림 보이기', exact: true }).click();
   await expect(
     page.getByText('그림을 불러오지 못했어요. 단어와 설명으로 학습해 주세요.'),
   ).toBeVisible();
@@ -174,16 +197,78 @@ test('published images load under the configured Pages path and survive direct r
   page,
 }) => {
   await page.goto('./#/deck/math-geometry/setup');
+  await selectPictureCard(page);
   await page.getByRole('button', { name: '학습 시작하기' }).click();
   const picture = page.locator('.study-card img');
+  await expect(picture).toHaveCount(0);
+  await page.getByRole('button', { name: '그림 보이기', exact: true }).click();
   await expect(picture).toBeVisible();
   await expect
     .poll(() => picture.evaluate((image) => (image as HTMLImageElement).naturalWidth))
     .toBeGreaterThan(0);
   await page.reload();
+  await expect(picture).toHaveCount(0);
+  await page.getByRole('button', { name: '그림 보이기', exact: true }).click();
   await expect
     .poll(() => picture.evaluate((image) => (image as HTMLImageElement).naturalWidth))
     .toBeGreaterThan(0);
+});
+
+test('existing sessions and completed history survive the rename and new defaults', async ({
+  page,
+}) => {
+  await page.addInitScript((key) => {
+    if (localStorage.getItem(key)) return;
+    const legacy = {
+      id: 'legacy-session',
+      deckId: 'kor-literature',
+      deckTitle: '말에 색을 입히는 표현법',
+      contentVersion: 'sample-2026-10-22-001',
+      startedAt: '2026-10-22T10:00:00.000Z',
+      cards: [
+        {
+          id: 'kor-lit-01',
+          revision: 1,
+          term: '직유법',
+          definition: '이전 회차에서 보관한 설명',
+          units: ['비유'],
+        },
+      ],
+      currentIndex: 0,
+      visibilityPreset: { term: false, visual: true, definition: true },
+      ratings: { 'kor-lit-01': 'known' },
+      order: 'random',
+    };
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        schemaVersion: 1,
+        activeByDeck: { 'kor-literature': legacy },
+        historyByDeck: {
+          'kor-literature': [
+            { ...legacy, id: 'legacy-completed', completedAt: '2026-10-22T10:10:00.000Z' },
+          ],
+        },
+      }),
+    );
+  }, storageKey);
+  await page.goto('./#/deck/kor-literature/study');
+  await expect(page.getByRole('button', { name: '단어 보이기', exact: true })).toBeVisible();
+  await expect(page.getByText('이전 회차에서 보관한 설명', { exact: true })).toBeVisible();
+  const before = await readProgress(page);
+  await page.reload();
+  await expect(page.getByTestId('study-card')).toBeVisible();
+  expect(await readProgress(page)).toEqual(before);
+  await page.getByRole('link', { name: '설정으로' }).click();
+  await expect(page.getByRole('button', { name: '단어 처음부터 표시' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect(page.getByRole('button', { name: '설명 가려두기' })).toHaveAttribute(
+    'aria-pressed',
+    'false',
+  );
+  expect((await readProgress(page)).historyByDeck['kor-literature']).toHaveLength(1);
 });
 
 test('updated catalog versions preserve the active snapshot and explain the difference', async ({

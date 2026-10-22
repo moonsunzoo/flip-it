@@ -157,7 +157,7 @@ export function Study({
           >
             <X size={21} />
             <span>
-              모름<small>Nope, 한 번 더</small>
+              모름<small>한 번 더</small>
             </span>
           </button>
           <button
@@ -176,7 +176,7 @@ export function Study({
           >
             <Check size={22} />
             <span>
-              알고 있음<small>Know, 알겠어요</small>
+              알고 있음<small>알겠어요</small>
             </span>
           </button>
         </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, ArrowUpRight, Check, Clock3, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Clock3, Sparkles } from 'lucide-react';
 import { cardsForDeck, type Catalog } from '../lib/content';
 import type { Progress } from '../lib/storage';
 import { summarize } from '../lib/study';
@@ -14,79 +14,11 @@ export function Home({ catalog, progress }: { catalog: Catalog; progress: Progre
   );
   return (
     <>
-      <section className="hero">
-        <div className="hero-copy">
-          <div className="hero-kicker">
-            <span className="tiny-star">✳</span> LITTLE CARDS, BIG IDEAS
-          </div>
-          <h1 tabIndex={-1}>
-            한 장씩 넘기면,
-            <br />
-            어느새 <span>내 지식.</span>
-          </h1>
-          <p>
-            아는 건 가볍게, 모르는 건 한 번 더.
-            <br />
-            그림과 설명으로 개념을 만나고, 나의 이해를 확인해요.
-          </p>
-          <a
-            className="button primary"
-            href="#subjects"
-            onClick={(event) => {
-              event.preventDefault();
-              document.getElementById('subjects')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            오늘의 학습 시작
-            <ArrowRight size={18} />
-          </a>
-          <div className="hero-footnote">
-            <Check size={14} /> 로그인 없이, 내 속도대로
-          </div>
-        </div>
-        <div className="hero-art" aria-hidden="true">
-          <div className="orb orb-one" />
-          <div className="orb orb-two" />
-          <span className="floating-star star-one">✳</span>
-          <span className="floating-star star-two">✧</span>
-          <div className="art-card art-back">
-            <span>매일 조금씩.</span>
-          </div>
-          <div className="art-card art-front">
-            <div className="art-card-top">
-              <span>오늘의 발견</span>
-              <span>01 / 08</span>
-            </div>
-            <div className="art-plant">
-              <svg viewBox="0 0 200 140">
-                <path d="M100 125V44" stroke="#365d49" strokeWidth="4" fill="none" />
-                <path d="M100 100C49 109 35 60 45 49c41-4 59 20 55 51" fill="#94b590" />
-                <path d="M100 72C99 23 145 8 164 22c-2 38-32 56-64 50" fill="#527b5f" />
-                <path d="m48 54 52 46m0-28 60-46" stroke="#e8edcf" strokeWidth="2" />
-                <ellipse cx="100" cy="128" rx="41" ry="5" fill="#d5d5bb" />
-              </svg>
-            </div>
-            <span className="art-term">배움은 자라는 거니까</span>
-            <div className="art-card-bottom">
-              <span>한 장의 작은 시작</span>
-              <span className="art-known">
-                <Check size={13} /> Know!
-              </span>
-            </div>
-          </div>
-          <div className="art-note">
-            몰라도 괜찮아.
-            <br />
-            <strong>지금 알아가면 되니까!</strong>
-          </div>
-        </div>
-      </section>
-
       <section id="subjects" className="catalog-section">
         <div className="section-heading">
           <div>
             <p className="eyebrow">YOUR NEXT DISCOVERY</p>
-            <h2>오늘은 무엇을 알아볼까요?</h2>
+            <h1 tabIndex={-1}>오늘은 무엇을 알아볼까요?</h1>
           </div>
           <span className="count-label">{catalog.decks.length}개의 단어장</span>
         </div>

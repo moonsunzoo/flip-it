@@ -36,8 +36,13 @@ function newSession(selected = cards) {
 
 describe('published catalog boundary', () => {
   it('validates all sample decks and their referenced cards', () => {
-    expect(catalog.cards).toHaveLength(20);
+    expect(catalog.cards).toHaveLength(150);
     expect(catalog.decks).toHaveLength(3);
+    for (const sampleDeck of catalog.decks) {
+      const sampleCards = cardsForDeck(catalog, sampleDeck);
+      expect(sampleCards).toHaveLength(50);
+      expect(new Set(sampleCards.map((card) => card.term)).size).toBe(50);
+    }
     expect(catalog.cards.every((card) => card.term && card.definition)).toBe(true);
   });
   it('rejects drafts, dangling references and duplicate card identities', () => {
@@ -65,6 +70,13 @@ describe('published catalog boundary', () => {
 });
 
 describe('study sessions', () => {
+  it('starts new sessions with only the term visible', () => {
+    expect(newSession().visibilityPreset).toEqual({
+      term: true,
+      visual: false,
+      definition: false,
+    });
+  });
   it('rejects zero cards and an entirely hidden initial preset', () => {
     expect(() => newSession([])).toThrow();
     expect(() =>

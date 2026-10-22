@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { completedSessionSchema, sessionSchema, type Session } from './study';
 
+// Keep the original key so the flip-it rename preserves existing sessions and history.
 export const STORAGE_KEY = 'know-or-nope:progress:v1';
 export const HISTORY_LIMIT = 20;
 export const progressSchema = z
