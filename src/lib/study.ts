@@ -22,6 +22,8 @@ const sessionFields = {
   visibilityPreset: visibilitySchema,
   ratings: z.record(z.string(), ratingSchema),
   order: z.enum(['random', 'alphabetical']),
+  // Optional for sessions saved before touch navigation was introduced.
+  swipeHintDismissed: z.boolean().optional(),
 };
 const sessionBase = z.object(sessionFields);
 function validSession(session: z.infer<typeof sessionBase>) {

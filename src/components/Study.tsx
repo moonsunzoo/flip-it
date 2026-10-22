@@ -1,8 +1,19 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, Flag, RotateCcw, X } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Eye,
+  EyeOff,
+  Flag,
+  MoveHorizontal,
+  RotateCcw,
+  X,
+} from 'lucide-react';
 import type { Card } from '../lib/content';
 import { rateCard, summarize, type Session, type Visibility } from '../lib/study';
 import { BackLink, deckPath, go } from './ui';
+import { useCardSwipe } from '../lib/useCardSwipe';
 
 function Visual({ card }: { card: Card }) {
   const [failed, setFailed] = useState(false);
@@ -77,13 +88,25 @@ export function Study({
   }, [session.id, session.currentIndex, session.visibilityPreset]);
   const summary = summarize(session);
   const rating = session.ratings[card.id];
+  const swipe = useCardSwipe(move);
+  const showSwipeHint =
+    session.currentIndex === 0 &&
+    !!rating &&
+    session.cards.length > 1 &&
+    !session.swipeHintDismissed;
   function toggle(region: keyof Visibility) {
     setVisibility((value) => ({ ...value, [region]: !value[region] }));
   }
   function move(delta: number) {
+    const currentIndex = Math.max(
+      0,
+      Math.min(session.cards.length - 1, session.currentIndex + delta),
+    );
+    if (currentIndex === session.currentIndex) return;
     update({
       ...session,
-      currentIndex: Math.max(0, Math.min(session.cards.length - 1, session.currentIndex + delta)),
+      currentIndex,
+      swipeHintDismissed: true,
     });
   }
   return (
@@ -124,6 +147,7 @@ export function Study({
         key={`${session.id}-${card.id}`}
         data-testid="study-card"
         data-card-id={card.id}
+        {...swipe}
       >
         <Region name="단어" visible={visibility.term} onToggle={() => toggle('term')}>
           <h2 className="study-term">{card.term}</h2>
@@ -147,65 +171,82 @@ export function Study({
           <p className="no-visual-note">그림 없이 단어와 설명으로 학습하는 카드예요.</p>
         )}
       </article>
-      <div className="self-check">
-        <p>이 개념, 얼마나 알고 있나요?</p>
-        <div className="rating-actions">
-          <button
-            className="rating unknown"
-            aria-pressed={rating === 'unknown'}
-            onClick={() => update(rateCard(session, card.id, 'unknown'))}
-          >
-            <X size={21} />
-            <span>
-              모름<small>한 번 더</small>
-            </span>
-          </button>
-          <button
-            className="clear-rating"
-            disabled={!rating}
-            aria-label="판정 취소"
-            onClick={() => update(rateCard(session, card.id, null))}
-          >
-            <RotateCcw size={18} />
-            <span>판정 취소</span>
-          </button>
-          <button
-            className="rating known"
-            aria-pressed={rating === 'known'}
-            onClick={() => update(rateCard(session, card.id, 'known'))}
-          >
-            <Check size={22} />
-            <span>
-              알고 있음<small>알겠어요</small>
-            </span>
-          </button>
-        </div>
-      </div>
-      <nav className="card-navigation" aria-label="카드 탐색">
-        <button
-          className="button secondary"
-          disabled={session.currentIndex === 0}
-          onClick={() => move(-1)}
-        >
-          <ArrowLeft size={17} />
-          이전
-        </button>
-        <span className="small muted">판정 없이 넘어가도 괜찮아요.</span>
-        {session.currentIndex < session.cards.length - 1 ? (
-          <button className="button secondary" onClick={() => move(1)}>
-            다음
-            <ArrowRight size={17} />
-          </button>
-        ) : (
-          <button
-            className="button primary"
-            onClick={() => go(deckPath(session.deckId, 'results'))}
-          >
-            결과 보기
-            <ArrowRight size={17} />
-          </button>
+      <div className="study-controls">
+        {showSwipeHint && (
+          <div className="swipe-hint" role="status">
+            <MoveHorizontal size={22} aria-hidden="true" />
+            <p>
+              <strong>카드를 좌우로 밀어보세요</strong>
+              <span>왼쪽은 다음, 오른쪽은 이전 카드예요.</span>
+            </p>
+            <button
+              aria-label="스와이프 안내 닫기"
+              onClick={() => update({ ...session, swipeHintDismissed: true })}
+            >
+              <X size={18} />
+            </button>
+          </div>
         )}
-      </nav>
+        <div className="self-check">
+          <p>이 개념, 얼마나 알고 있나요?</p>
+          <div className="rating-actions">
+            <button
+              className="rating unknown"
+              aria-pressed={rating === 'unknown'}
+              onClick={() => update(rateCard(session, card.id, 'unknown'))}
+            >
+              <X size={21} />
+              <span>
+                모름<small>한 번 더</small>
+              </span>
+            </button>
+            <button
+              className="clear-rating"
+              disabled={!rating}
+              aria-label="판정 취소"
+              onClick={() => update(rateCard(session, card.id, null))}
+            >
+              <RotateCcw size={18} />
+              <span>판정 취소</span>
+            </button>
+            <button
+              className="rating known"
+              aria-pressed={rating === 'known'}
+              onClick={() => update(rateCard(session, card.id, 'known'))}
+            >
+              <Check size={22} />
+              <span>
+                알고 있음<small>알겠어요</small>
+              </span>
+            </button>
+          </div>
+        </div>
+        <nav className="card-navigation" aria-label="카드 탐색">
+          <button
+            className="button secondary"
+            disabled={session.currentIndex === 0}
+            onClick={() => move(-1)}
+          >
+            <ArrowLeft size={17} />
+            이전
+          </button>
+          <span className="small muted">판정 없이 넘어가도 괜찮아요.</span>
+          {session.currentIndex < session.cards.length - 1 ? (
+            <button className="button secondary" onClick={() => move(1)}>
+              다음
+              <ArrowRight size={17} />
+            </button>
+          ) : (
+            <button
+              className="button primary"
+              onClick={() => go(deckPath(session.deckId, 'results'))}
+            >
+              결과 보기
+              <ArrowRight size={17} />
+            </button>
+          )}
+        </nav>
+      </div>
     </div>
   );
 }
