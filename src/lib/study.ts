@@ -22,7 +22,7 @@ const sessionFields = {
   visibilityPreset: visibilitySchema,
   ratings: z.record(z.string(), ratingSchema),
   order: z.enum(['random', 'alphabetical']),
-  // Optional for sessions saved before touch navigation was introduced.
+  // Retain the retired hint field when reading older saved sessions; new sessions omit it.
   swipeHintDismissed: z.boolean().optional(),
 };
 const sessionBase = z.object(sessionFields);

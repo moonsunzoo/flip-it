@@ -1,19 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Eye,
-  EyeOff,
-  Flag,
-  MoveHorizontal,
-  RotateCcw,
-  X,
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, Flag, RotateCcw, X } from 'lucide-react';
 import type { Card } from '../lib/content';
 import { rateCard, summarize, type Session, type Visibility } from '../lib/study';
 import { BackLink, deckPath, go } from './ui';
-import { useCardSwipe } from '../lib/useCardSwipe';
 
 function Visual({ card }: { card: Card }) {
   const [failed, setFailed] = useState(false);
@@ -88,12 +77,6 @@ export function Study({
   }, [session.id, session.currentIndex, session.visibilityPreset]);
   const summary = summarize(session);
   const rating = session.ratings[card.id];
-  const swipe = useCardSwipe(move);
-  const showSwipeHint =
-    session.currentIndex === 0 &&
-    !!rating &&
-    session.cards.length > 1 &&
-    !session.swipeHintDismissed;
   function toggle(region: keyof Visibility) {
     setVisibility((value) => ({ ...value, [region]: !value[region] }));
   }
@@ -106,7 +89,6 @@ export function Study({
     update({
       ...session,
       currentIndex,
-      swipeHintDismissed: true,
     });
   }
   return (
@@ -147,7 +129,6 @@ export function Study({
         key={`${session.id}-${card.id}`}
         data-testid="study-card"
         data-card-id={card.id}
-        {...swipe}
       >
         <Region name="단어" visible={visibility.term} onToggle={() => toggle('term')}>
           <h2 className="study-term">{card.term}</h2>
@@ -172,21 +153,6 @@ export function Study({
         )}
       </article>
       <div className="study-controls">
-        {showSwipeHint && (
-          <div className="swipe-hint" role="status">
-            <MoveHorizontal size={22} aria-hidden="true" />
-            <p>
-              <strong>카드를 좌우로 밀어보세요</strong>
-              <span>왼쪽은 다음, 오른쪽은 이전 카드예요.</span>
-            </p>
-            <button
-              aria-label="스와이프 안내 닫기"
-              onClick={() => update({ ...session, swipeHintDismissed: true })}
-            >
-              <X size={18} />
-            </button>
-          </div>
-        )}
         <div className="self-check">
           <p>이 개념, 얼마나 알고 있나요?</p>
           <div className="rating-actions">

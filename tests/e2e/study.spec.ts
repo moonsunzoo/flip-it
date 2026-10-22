@@ -235,6 +235,7 @@ test('existing sessions and completed history survive the rename and new default
     if (localStorage.getItem(key)) return;
     const legacy = {
       id: 'legacy-session',
+      swipeHintDismissed: true,
       deckId: 'kor-literature',
       deckTitle: '말에 색을 입히는 표현법',
       contentVersion: 'sample-2026-10-22-001',
@@ -389,38 +390,33 @@ async function startTwoCards(page: Page) {
   await expect(page.getByTestId('study-card')).toBeVisible();
 }
 
-test('touch navigation preserves ratings, resets visibility, and shows the hint only on the first card', async ({
+test('button navigation preserves ratings and visibility without swipe guidance', async ({
   page,
-  isMobile,
 }) => {
   await startTwoCards(page);
-  await expect(page.locator('.swipe-hint')).toHaveCount(0);
   const firstId = await page.getByTestId('study-card').getAttribute('data-card-id');
+  await expect(page.getByRole('button', { name: '이전', exact: true })).toBeDisabled();
   await page.getByRole('button', { name: '알고 있음 알겠어요' }).click();
-  if (isMobile) await expect(page.getByText('카드를 좌우로 밀어보세요')).toBeVisible();
+  await expect(page.getByText('카드를 좌우로 밀어보세요')).toHaveCount(0);
   await page.getByRole('button', { name: '설명 보이기', exact: true }).click();
-  await touchGesture(page, -100);
+  await page.getByRole('button', { name: '다음', exact: true }).click();
   await expect(page.getByTestId('study-card')).not.toHaveAttribute('data-card-id', firstId!);
   await expect(page.getByRole('button', { name: '설명 보이기', exact: true })).toBeVisible();
-  await expect(page.locator('.swipe-hint')).toHaveCount(0);
-  const lastId = await page.getByTestId('study-card').getAttribute('data-card-id');
   await page.getByRole('button', { name: '모름 한 번 더' }).click();
-  await touchGesture(page, -100);
-  await expect(page.getByTestId('study-card')).toHaveAttribute('data-card-id', lastId!);
+  await expect(page.getByRole('button', { name: '다음', exact: true })).toHaveCount(0);
+  await expect(
+    page.getByRole('navigation', { name: '카드 탐색' }).getByRole('button', { name: '결과 보기' }),
+  ).toBeVisible();
   expect((await readProgress(page)).historyByDeck).toEqual({});
-  await touchGesture(page, 100);
+  await page.getByRole('button', { name: '이전', exact: true }).click();
   await expect(page.getByTestId('study-card')).toHaveAttribute('data-card-id', firstId!);
   await expect(page.getByRole('button', { name: '알고 있음 알겠어요' })).toHaveAttribute(
     'aria-pressed',
     'true',
   );
-  await expect(page.locator('.swipe-hint')).toHaveCount(0);
-  await touchGesture(page, 100);
-  await expect(page.getByTestId('study-card')).toHaveAttribute('data-card-id', firstId!);
   const before = await readProgress(page);
   await page.reload();
   await expect(page.getByTestId('study-card')).toBeVisible();
-  await expect(page.locator('.swipe-hint')).toHaveCount(0);
   expect(await readProgress(page)).toEqual(before);
   await page.getByRole('button', { name: '다음', exact: true }).click();
   await expect(page.getByRole('button', { name: '모름 한 번 더' })).toHaveAttribute(
@@ -429,28 +425,52 @@ test('touch navigation preserves ratings, resets visibility, and shows the hint 
   );
 });
 
-test('short, vertical, and cancelled touches do not navigate or accidentally reveal content', async ({
+test('touch gestures leave the card unchanged and mobile navigation stays at the viewport bottom', async ({
   page,
+  isMobile,
 }) => {
   await startTwoCards(page);
   const firstId = await page.getByTestId('study-card').getAttribute('data-card-id');
-  await touchGesture(page, -25, 0, false, '.reveal-button');
-  await expect(page.getByTestId('study-card')).toHaveAttribute('data-card-id', firstId!);
-  await expect(page.getByRole('button', { name: '설명 보이기', exact: true })).toBeVisible();
-  await touchGesture(page, -80, -120);
-  await expect(page.getByTestId('study-card')).toHaveAttribute('data-card-id', firstId!);
-  await touchGesture(page, -100, 0, true);
-  await expect(page.getByTestId('study-card')).toHaveAttribute('data-card-id', firstId!);
+  const navigation = page.getByRole('navigation', { name: '카드 탐색' });
+  async function expectFixedNavigation() {
+    if (!isMobile) return;
+    const navBox = (await navigation.boundingBox())!;
+    expect(Math.abs(navBox.y + navBox.height - page.viewportSize()!.height)).toBeLessThan(2);
+    for (const button of await navigation.getByRole('button').all()) {
+      const box = (await button.boundingBox())!;
+      expect(box.height).toBeGreaterThanOrEqual(48);
+      expect(box.y).toBeGreaterThanOrEqual(navBox.y);
+      expect(box.y + box.height).toBeLessThanOrEqual(page.viewportSize()!.height);
+    }
+  }
+  await expectFixedNavigation();
+  await page.getByRole('button', { name: '알고 있음 알겠어요' }).click();
+  await expect(page.getByText('카드를 좌우로 밀어보세요')).toHaveCount(0);
+  await expectFixedNavigation();
+  for (const [dx, dy] of [
+    [-100, 0],
+    [100, 0],
+    [-25, 0],
+    [-80, -120],
+  ]) {
+    await touchGesture(page, dx, dy);
+    await expect(page.getByTestId('study-card')).toHaveAttribute('data-card-id', firstId!);
+  }
   await page.getByRole('button', { name: '설명 보이기', exact: true }).click();
   await expect(page.getByRole('button', { name: '설명 가리기', exact: true })).toBeVisible();
-  // A swipe can begin on the large reveal button without treating it as a tap.
-  await page.getByRole('button', { name: '설명 가리기', exact: true }).click();
-  await touchGesture(page, -100, 0, false, '.reveal-button');
+  await expectFixedNavigation();
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expectFixedNavigation();
+  if (isMobile) {
+    const footer = (await page.locator('.site-footer').boundingBox())!;
+    const nav = (await navigation.boundingBox())!;
+    expect(footer.y + footer.height).toBeLessThanOrEqual(nav.y);
+    await page.setViewportSize({ width: 360, height: 640 });
+    await expectFixedNavigation();
+  }
+  await page.getByRole('button', { name: '다음', exact: true }).click();
   await expect(page.getByTestId('study-card')).not.toHaveAttribute('data-card-id', firstId!);
-  await expect(page.getByRole('button', { name: '설명 보이기', exact: true })).toBeVisible();
-  expect(
-    Object.keys((await readProgress(page)).activeByDeck['kor-literature'].ratings),
-  ).toHaveLength(0);
+  await expectFixedNavigation();
   await page.getByRole('button', { name: '설명 보이기', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('button', { name: '설명 가리기', exact: true })).toBeVisible();

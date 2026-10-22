@@ -10,7 +10,8 @@
 
 - [PRD v0.2 원본](docs/prd/know-or-nope-prd-v0.2.md)
 - [PRD v0.3 변경 사항](docs/prd/flip-it-prd-v0.3.md)
-- [현재 PRD v0.4 모바일 학습 흐름](docs/prd/flip-it-prd-v0.4.md)
+- [PRD v0.4 모바일 학습 흐름](docs/prd/flip-it-prd-v0.4.md)
+- [현재 PRD v0.5 버튼 중심 탐색](docs/prd/flip-it-prd-v0.5.md)
 - [PRD 관리 규칙](docs/prd/README.md)
 - [구현 현황과 다음 작업](docs/implementation-status.md)
 - [초기 기술 결정](docs/decisions/0001-initial-architecture.md)
@@ -48,8 +49,8 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run test:e2e
 - 회차당 한 번 무작위 배치 또는 가나다순 정렬
 - 단어 ON·그림 OFF·설명 OFF로 시작하는 초기 표시 설정과 학습 중 독립 토글
 - 알고 있음 / 모름 / 미판정, 판정 변경·취소
-- 터치 카드의 좌우 스와이프와 이전·다음 버튼, 첫 카드 판정 시 한 번만 표시하는 안내
-- 모바일에서 큰 터치 영역과 하단 학습 조작부
+- 이전·다음 버튼으로 카드 탐색, 모바일 화면 하단의 고정 탐색부
+- 모바일에서 큰 터치 영역과 카드 아래의 판정 버튼
 - 새로고침 후 순서·위치·평가 복원, 단어장별 이어하기
 - 명시적 완료, 결과 집계, 단어장별 최근 20회 이력
 - 그림 없음·이미지 404·저장소 오류·잘못된 기록·콘텐츠 버전 변경 안내
